@@ -36,6 +36,8 @@ for u in url:
 
 		try:
 
+			
+
 			url = 'https://photokinesiologas.com'+link.get('href')
 
 			x = requests.get(url)
@@ -43,6 +45,26 @@ for u in url:
 			datax = x.text
 
 			soupx = BeautifulSoup(datax)
+
+
+			c=0
+
+			for m in soupx.find_all('meta'):
+
+				c=c+1
+
+				if c==9:
+
+					coordenadas = m['content']
+
+					print c,m["content"]
+
+
+			for f in soupx.find("div", {"class": "bloque_tarifas"}):
+
+				precio = f.text
+
+				print precio
 
 		
 
@@ -117,7 +139,7 @@ for u in url:
 
 					pass
 
-			contenido = json.dumps({'wsp':_telefono,'anuncio':total_cont_anuncio,'imagenes':imagenes,'detalle':listdetalle,'fono':fono})
+			contenido = json.dumps({'precio':precio,'coordenadas':coordenadas,'wsp':_telefono,'anuncio':total_cont_anuncio,'imagenes':imagenes,'detalle':listdetalle,'fono':fono})
 
 			#print contenido
 
@@ -126,7 +148,7 @@ for u in url:
 
 			try:
 
-				dat= requests.get('http://mylookxpressapp.com:2000/verificatelefono/'+str(telefono))
+				dat= requests.get('http://142.93.202.255:2000/verificatelefono/'+str(telefono))
 
 				print dat.text
 
@@ -134,7 +156,7 @@ for u in url:
 
 					print 'Entre..... =)'
 
-					cc = requests.post('http://mylookxpressapp.com:2000/photoguardaurlphoto', data = {'url':url,'contenido':contenido})
+					cc = requests.post('http://142.93.202.255:2000/photoguardaurlphoto', data = {'url':url,'contenido':contenido})
 
 			except:
 
