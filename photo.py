@@ -9,10 +9,12 @@ import json
 n=0
 
 
-url = ['https://www.photokinesiologas.com/kinesiologas/lima-metropolitana/surco','https://www.photokinesiologas.com/kinesiologas/lima-metropolitana/san-isidro','https://www.photokinesiologas.com/kinesiologas/surquillo','https://www.photokinesiologas.com/kinesiologas/lince','https://www.photokinesiologas.com/kinesiologas/san-juan-de-miraflores','https://www.photokinesiologas.com/kinesiologas/cerca_-12.1061142,-77.0307285,3',u'https://www.photokinesiologas.com/kinesiologas/lima-metropolitana/18-21-años','https://photokinesiologas.com/kinesiologas/lima-metropolitana/san-martin-de-porres','https://photokinesiologas.com/kinesiologas/lima-metropolitana/venezolanas','https://photokinesiologas.com/kinesiologas/lima-metropolitana/','https://photokinesiologas.com/kinesiologas/','https://photokinesiologas.com/']
+url = ['https://www.photokinesiologas.com/kinesiologas/lima-metropolitana/comas','https://www.photokinesiologas.com/kinesiologas/lima-metropolitana/villa-maria-del-triunfo','https://www.photokinesiologas.com/kinesiologas/lima-metropolitana/san-miguel','https://www.photokinesiologas.com/kinesiologas/lima-metropolitana/surco','https://www.photokinesiologas.com/kinesiologas/lima-metropolitana/san-isidro','https://www.photokinesiologas.com/kinesiologas/surquillo','https://www.photokinesiologas.com/kinesiologas/lince','https://www.photokinesiologas.com/kinesiologas/san-juan-de-miraflores','https://www.photokinesiologas.com/kinesiologas/cerca_-12.1061142,-77.0307285,3',u'https://www.photokinesiologas.com/kinesiologas/lima-metropolitana/18-21-años','https://photokinesiologas.com/kinesiologas/lima-metropolitana/san-martin-de-porres','https://photokinesiologas.com/kinesiologas/lima-metropolitana/venezolanas','https://photokinesiologas.com/kinesiologas/lima-metropolitana/','https://photokinesiologas.com/kinesiologas/','https://photokinesiologas.com/']
 
 
 for u in url:
+
+	print 'Quueee'
 
 
 	try:
@@ -32,118 +34,145 @@ for u in url:
 
 	for link in soup.find_all('a', class_='link_anuncio'):
 
-		print link.get('href')
+		print 'href...',link.get('href')
 
-		try:
+	
 
-			url = 'https://photokinesiologas.com'+link.get('href')
+		url = 'https://photokinesiologas.com'+link.get('href')
 
-			x = requests.get(url)
+		x = requests.get(url)
 
-			datax = x.text
+		datax = x.text
 
-			soupx = BeautifulSoup(datax)
+		soupx = BeautifulSoup(datax)
 
-		
-
-			_telefono=[]
-
-			for wsp in soupx.find_all('span', class_='boton_telefono whatsapp'):
-
-				try:
-
-					telefono =  wsp.get('data-telefono')
-
-					_telefono.append(telefono)
-
-				except:
-
-					pass
-
-
-			total_cont_anuncio =[]
-
-			for anuncio in soupx.find("div", {"id": "anuncio_texto"}):
-
-				try:
-
-					cont_anuncio =  anuncio.get_text()
-
-					total_cont_anuncio.append(cont_anuncio)
-
-				except:
-
-					pass
-
-
-			imagenes = []
-
-			for sobremi in soupx.find("div", {"class": "contenedor"}):
-
-				try:
-
-					imagen= sobremi.get('src')
-
-					imagenes.append(imagen)
-
-				except:
-
-					pass
-
-			listdetalle=[]
-
-			for detalle in soupx.find_all("a", {"class": "anuncio_categoria categoria_sel_off"}):
-
-				try:
-
-					detalle= detalle.get_text()
-
-					listdetalle.append(detalle)
-
-				except:
-
-					pass
-
-
-
-
-			for phone in soupx.find("td", {"class": "boton_texto"}):
-
-				try:
-
-					fono = phone
-
-				except:
-
-					pass
-
-			contenido = json.dumps({'wsp':_telefono,'anuncio':total_cont_anuncio,'imagenes':imagenes,'detalle':listdetalle,'fono':fono})
-
-			#print contenido
-
-
-			print '----------------------'
+		edad=''
+		for anuncio in soupx.find_all("span", {"id": "anuncio_edad"}):
 
 			try:
-
-				dat= requests.get('http://mylookxpressapp.com:2000/verificatelefono/'+str(telefono))
-
-				print dat.text
-
-				if dat.text!='"no"':
-
-					print 'Entre..... =)'
-
-					cc = requests.post('http://mylookxpressapp.com:2000/photoguardaurlphoto', data = {'url':url,'contenido':contenido})
+				
+				edad = anuncio.get_text().replace('|','').replace(u'años','')
 
 			except:
 
-				print 'Hay un error =('
+				pass
+
+
+		precio=''
+		for data in soupx.find_all('div', {"id": "anuncio_disponibilidad"}):
+
+			try:
+				
+				precio = data.get_text()
+
+				print precio
+
+			except:
+
+				pass
+
+
+		_telefono=[]
+
+		for wsp in soupx.find_all('span', class_='boton_telefono whatsapp'):
+
+			try:
+
+				telefono =  wsp.get('data-telefono')
+
+				_telefono.append(telefono)
+
+			except:
+
+				pass
+
+
+		total_cont_anuncio =[]
+
+		for anuncio in soupx.find("div", {"id": "anuncio_texto"}):
+
+			try:
+
+				cont_anuncio =  anuncio.get_text()
+
+				
+				total_cont_anuncio.append(cont_anuncio)
+
+			except:
+
+				pass
+
+
+		imagenes = []
+
+		for sobremi in soupx.find("div", {"class": "contenedor"}):
+
+			try:
+
+				imagen= sobremi.get('src')
+
+				imagenes.append(imagen)
+
+			except:
+
+				pass
+
+		listdetalle=[]
+
+		for detalle in soupx.find_all("a", {"class": "anuncio_categoria categoria_sel_off"}):
+
+			try:
+
+				detalle= detalle.get_text()
+
+				listdetalle.append(detalle)
+
+			except:
+
+				pass
+
+
+
+
+		for phone in soupx.find("td", {"class": "boton_texto"}):
+
+			try:
+
+				fono = phone
+
+			except:
+
+				pass
+
+		contenido = json.dumps({'wsp':_telefono,'anuncio':total_cont_anuncio,'imagenes':imagenes,'detalle':listdetalle,'fono':fono,'edad':edad,'precio':precio})
+
+		#print contenido
+
+
+		print '----------------------'
+
+		try:
+
+			dat= requests.get('http://aniavestidos.com:5000/verificatelefono/'+str(telefono))
+
+			print 'Verificando...',dat.text
+
+			if dat.text!='"no"':
+
+				print 'Entre..... =)'
+
+				cc = requests.post('http://aniavestidos.com:5000/photoguardaurlphoto', data = {'url':url,'contenido':contenido})
+
+			else:
+
+				print 'Actualizando..'
+
+				cc = requests.post('http://aniavestidos.com:5000/photoguardaurlactualiza', data = {'url':url,'contenido':contenido})
+
 
 		except:
 
-			pass
-
+			pass			
 
 			
 

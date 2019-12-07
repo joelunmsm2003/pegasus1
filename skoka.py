@@ -114,14 +114,14 @@ for x in range(100):
 				
 				try :
 
-					dat= requests.get('http://mylookxpressapp.com:2000/verificatelefono/'+str(fono))
+					dat= requests.get('http://aniavestidos.com:5000/verificatelefono/'+str(fono))
 
 
 					if dat.text!='"no"':
 
 						print 'Entre..... =)'
 
-						cc = requests.post('http://mylookxpressapp.com:2000/guardaskoka', data = {'url':url,'contenido':contenido})
+						cc = requests.post('http://aniavestidos.com:5000/guardaskoka', data = {'url':url,'contenido':contenido})
 
 				except:
 
