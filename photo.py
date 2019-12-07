@@ -131,6 +131,7 @@ for u in url:
 
 				pass
 
+			contenido = json.dumps({'precio':precio,'coordenadas':coordenadas,'wsp':_telefono,'anuncio':total_cont_anuncio,'imagenes':imagenes,'detalle':listdetalle,'fono':fono})
 
 
 
@@ -138,15 +139,13 @@ for u in url:
 
 			try:
 
-				fono = phone
+				dat= requests.get('http://142.93.202.255:2000/verificatelefono/'+str(telefono))
 
 			except:
 
 				pass
 
 		contenido = json.dumps({'wsp':_telefono,'anuncio':total_cont_anuncio,'imagenes':imagenes,'detalle':listdetalle,'fono':fono,'edad':edad,'precio':precio})
-
-		#print contenido
 
 
 		print '----------------------'
