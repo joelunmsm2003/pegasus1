@@ -9,7 +9,7 @@ import json
 n=0
 
 
-url = ['https://www.photokinesiologas.com/kinesiologas/lima-metropolitana/comas','https://www.photokinesiologas.com/kinesiologas/lima-metropolitana/villa-maria-del-triunfo','https://www.photokinesiologas.com/kinesiologas/lima-metropolitana/san-miguel','https://www.photokinesiologas.com/kinesiologas/lima-metropolitana/surco','https://www.photokinesiologas.com/kinesiologas/lima-metropolitana/san-isidro','https://www.photokinesiologas.com/kinesiologas/surquillo','https://www.photokinesiologas.com/kinesiologas/lince','https://www.photokinesiologas.com/kinesiologas/san-juan-de-miraflores','https://www.photokinesiologas.com/kinesiologas/cerca_-12.1061142,-77.0307285,3',u'https://www.photokinesiologas.com/kinesiologas/lima-metropolitana/18-21-años','https://photokinesiologas.com/kinesiologas/lima-metropolitana/san-martin-de-porres','https://photokinesiologas.com/kinesiologas/lima-metropolitana/venezolanas','https://photokinesiologas.com/kinesiologas/lima-metropolitana/','https://photokinesiologas.com/kinesiologas/','https://photokinesiologas.com/']
+url = ['https://www.photokinesiologas.com/kinesiologas/lima-metropolitana/villa-maria-del-triunfo','https://www.photokinesiologas.com/kinesiologas/lima-metropolitana/san-miguel','https://www.photokinesiologas.com/kinesiologas/lima-metropolitana/surco','https://www.photokinesiologas.com/kinesiologas/lima-metropolitana/san-isidro','https://www.photokinesiologas.com/kinesiologas/surquillo','https://www.photokinesiologas.com/kinesiologas/lince','https://www.photokinesiologas.com/kinesiologas/san-juan-de-miraflores','https://www.photokinesiologas.com/kinesiologas/cerca_-12.1061142,-77.0307285,3',u'https://www.photokinesiologas.com/kinesiologas/lima-metropolitana/18-21-años','https://photokinesiologas.com/kinesiologas/lima-metropolitana/san-martin-de-porres','https://photokinesiologas.com/kinesiologas/lima-metropolitana/venezolanas','https://photokinesiologas.com/kinesiologas/lima-metropolitana/','https://photokinesiologas.com/kinesiologas/','https://photokinesiologas.com/']
 
 
 for u in url:
@@ -17,19 +17,14 @@ for u in url:
 	print 'Quueee'
 
 
-	try:
+	r  = requests.get(u)
 
-		r  = requests.get(u)
+	data = r.text
 
-		data = r.text
+	print 'data',data
 
-		soup = BeautifulSoup(data)
+	soup = BeautifulSoup(data)
 
-	except:
-
-		data = ''
-
-		soup = BeautifulSoup(data)
 
 
 	for link in soup.find_all('a', class_='link_anuncio'):
@@ -45,6 +40,8 @@ for u in url:
 		datax = x.text
 
 		soupx = BeautifulSoup(datax)
+
+
 
 		edad=''
 		for anuncio in soupx.find_all("span", {"id": "anuncio_edad"}):
@@ -86,6 +83,8 @@ for u in url:
 
 				pass
 
+		print _telefono
+
 
 		total_cont_anuncio =[]
 
@@ -101,6 +100,16 @@ for u in url:
 			except:
 
 				pass
+
+
+
+		for anuncio in soupx.find_all("span", {"id": "anuncio_poblacion"}):
+
+
+			distrito =  anuncio.get_text()
+
+
+
 
 
 		imagenes = []
@@ -131,47 +140,36 @@ for u in url:
 
 				pass
 
-			contenido = json.dumps({'precio':precio,'coordenadas':coordenadas,'wsp':_telefono,'anuncio':total_cont_anuncio,'imagenes':imagenes,'detalle':listdetalle,'fono':fono})
-
-
-
-		for phone in soupx.find("td", {"class": "boton_texto"}):
-
-			try:
-
-				dat= requests.get('http://142.93.202.255:2000/verificatelefono/'+str(telefono))
-
-			except:
-
-				pass
-
-		contenido = json.dumps({'wsp':_telefono,'anuncio':total_cont_anuncio,'imagenes':imagenes,'detalle':listdetalle,'fono':fono,'edad':edad,'precio':precio})
-
-
-		print '----------------------'
-
 		try:
 
-			dat= requests.get('http://aniavestidos.com:5000/verificatelefono/'+str(telefono))
-
-			print 'Verificando...',dat.text
-
-			if dat.text!='"no"':
-
-				print 'Entre..... =)'
-
-				cc = requests.post('http://aniavestidos.com:5000/photoguardaurlphoto', data = {'url':url,'contenido':contenido})
-
-			else:
-
-				print 'Actualizando..'
-
-				cc = requests.post('http://aniavestidos.com:5000/photoguardaurlactualiza', data = {'url':url,'contenido':contenido})
-
+			telefono=_telefono[0]
 
 		except:
 
-			pass			
+			telefono=000
 
-			
+		contenido = json.dumps({'distrito':distrito,'fono':telefono,'anuncio':total_cont_anuncio,'imagenes':imagenes,'detalle':listdetalle,'edad':edad,'precio':precio})
+
+		print contenido
+
+
+		dat= requests.get('http://aniavestidos.com:5000/verificatelefono/'+str(telefono))
+
+		print 'Verificando...',dat.text
+
+
+		if dat.text!='"no"':
+
+			print 'Entre..... =)'
+
+			cc = requests.post('http://aniavestidos.com:5000/photoguardaurlphoto', data = {'url':url,'contenido':contenido})
+
+		#else:
+
+		#	print 'Actualizando..'
+
+		#	cc = requests.post('http://aniavestidos.com:5000/photoguardaurlactualiza', data = {'url':url,'contenido':contenido})
+
+
+		
 
